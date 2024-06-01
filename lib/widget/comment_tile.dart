@@ -42,65 +42,37 @@ class _CommentTileState extends State<CommentTile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: const CircleAvatar(
-        radius: 25,
-        backgroundImage: NetworkImage(
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRx-vjO0zJYwB_RcsSJySi9Ru2XEJ958dW20A&s",
-        ),
-      ),
-      title: const Text('Username'),
-      subtitle: widget.isAudio
-          ? Row(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const CircleAvatar(
+              radius: 25,
+              backgroundImage: NetworkImage(
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRx-vjO0zJYwB_RcsSJySi9Ru2XEJ958dW20A&s",
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  backgroundColor: Colors.grey.shade400,
-                  radius: 23,
-                  child: IconButton(
-                    icon: Icon(
-                      isPlaying ? Icons.pause : Icons.play_arrow,
-                      size: 25,
-                    ),
-                    onPressed: () async {
-                      if (isPlaying) {
-                        await audioPlayer.pause();
-                      } else {
-                        String url =
-                            "https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3";
-                        Source source = UrlSource(url);
-                        await audioPlayer.play(source);
-                      }
-                    },
-                  ),
+                const SizedBox(
+                  height: 5,
                 ),
-                Column(
-                  children: [
-                    Slider(
-                        activeColor: Colors.green,
-                        inactiveColor: Colors.grey,
-                        min: 0,
-                        max: duration.inSeconds.toDouble(),
-                        value: postion.inSeconds.toDouble(),
-                        onChanged: (value) async {
-                          final position = Duration(seconds: value.toInt());
-                          await audioPlayer.seek(position);
-                          await audioPlayer.resume();
-                        }),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            formatTime(postion),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                const Text('Username   2h'),
+                widget.isAudio ? _audioPlayer() : const Text("Comment here")
               ],
-            )
-          : const Text("Comment text goes here"),
+            ),
+          ],
+        ),
+        const Divider(
+          thickness: 1,
+        ),
+      ],
     );
   }
 
@@ -109,5 +81,51 @@ class _CommentTileState extends State<CommentTile> {
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return "$minutes:$seconds";
+  }
+
+  Widget _audioPlayer() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CircleAvatar(
+          backgroundColor: Colors.grey.shade400,
+          radius: 18,
+          child: IconButton(
+            icon: Icon(
+              isPlaying ? Icons.pause : Icons.play_arrow,
+              size: 20,
+            ),
+            onPressed: () async {
+              if (isPlaying) {
+                await audioPlayer.pause();
+              } else {
+                String url =
+                    "https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3";
+                Source source = UrlSource(url);
+                await audioPlayer.play(source);
+              }
+            },
+          ),
+        ),
+        Column(
+          children: [
+            Slider(
+                activeColor: Colors.green,
+                inactiveColor: Colors.grey,
+                min: 0,
+                max: duration.inSeconds.toDouble(),
+                value: postion.inSeconds.toDouble(),
+                onChanged: (value) async {
+                  final position = Duration(seconds: value.toInt());
+                  await audioPlayer.seek(position);
+                  await audioPlayer.resume();
+                }),
+          ],
+        ),
+        Text(
+          formatTime(postion),
+        ),
+      ],
+    );
   }
 }

@@ -99,6 +99,9 @@ class _CommentScreenState extends State<CommentScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      const Divider(
+                        thickness: 2,
+                      )
                     ],
                   ),
                   Expanded(
